@@ -13,8 +13,10 @@
 - Вывод результата
 - Последующее чтение команд до терминирующего условия (exit, и т.д.)
 
-Пример обработки одной команды:
-[![Scheme](scheme/scheme.png)](scheme/scheme.png)
+<details>
+<summary> Пример обработки одной команды:</summary>
+  [![Scheme](scheme/scheme.png)](scheme/scheme.png)
+</details>
 
 <ins>Описание основных сущностей</ins>:
 
