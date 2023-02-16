@@ -14,7 +14,7 @@
 - Последующее чтение команды до терминирующего условия (exit, и т.д.)
 
 Пример обработки одной команды:
-![Scheme](scheme/scheme.png)
+[![Scheme](scheme/scheme.png)](scheme/scheme.png)
 
 <ins>Описание основных сущностей</ins>:
 
