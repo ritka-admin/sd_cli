@@ -14,8 +14,8 @@
 - Последующее чтение команд до терминирующего условия (exit, и т.д.)
 
 <details>
-<summary> Пример обработки одной команды:</summary>
-  [![Scheme](scheme/scheme.png)](scheme/scheme.png)
+<summary>Пример обработки одной команды:</summary>
+  <img src="https://raw.githubusercontent.com/ritka-admin/sd_cli/dev/scheme/scheme.png">
 </details>
 
 <ins>Описание основных сущностей</ins>:
