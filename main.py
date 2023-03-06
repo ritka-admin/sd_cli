@@ -92,12 +92,13 @@ command_list = ["echo", "exit", "pwd", "cat", "wc"]
 
 def parser(input: List[InterpretString | PlainString]) -> Command:
 
-    if len(input) == 0 or input[0].raw_str not in command_list:
+    if len(input) == 0 or input[0].raw_str.rstrip() not in command_list:
         raise Exception
 
-    obj = EchoCommand(input[1].raw_str)
+    obj = EchoCommand(input[1])
     return obj
 # ----------------------------------------------------------------
+
 
 def main():
 

@@ -1,4 +1,6 @@
 import os
+from typing import Union
+from StringClasses import *
 
 
 class Command:
@@ -12,16 +14,20 @@ class Command:
 
 class EchoCommand(Command):
 
-    def __init__(self, arg):
+    def __init__(self, arg: Union[InterpretString | PlainString]):
         self.arg = arg
 
     def substitute_vars(self, envs):
-        if self.arg[0] == '$':
-            try:
-                value = envs[self.arg[1:]]
-                self.arg = value
-            except KeyError:
-                print("")
+        if isinstance(self.arg, InterpretString):
+            if self.arg.raw_str[0] == '$':
+                try:
+                    value = envs[self.arg.raw_str[1:]]
+                    self.arg = value
+                    return
+                except KeyError:
+                    print("")
+                    return
+        self.arg = self.arg.raw_str
 
     def execute(self):
-        os.system(f'echo {self.arg}')
+        print(self.arg)   # TODO: ok?
