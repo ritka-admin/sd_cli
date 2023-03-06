@@ -21,12 +21,12 @@ def lexer(stdin: str) -> List[InterpretString | PlainString]:
     for i in range(len(stdin)):
 
         if stdin[i] == "'":
-            words.append(stdin[start:i+1])
+            words.append(stdin[start:i])
             start = i + 1
             words.append("'")
 
         elif stdin[i] == '"':
-            words.append(stdin[start:i + 1])
+            words.append(stdin[start:i])
             start = i + 1
             words.append('"')
 
@@ -74,8 +74,9 @@ def lexer(stdin: str) -> List[InterpretString | PlainString]:
         elif met_binary:
             binary_words[cur_b][0] += word
 
-        elif not met_binary and not met_binary:
+        elif not met_unary and not met_binary:
             binary_words.append([word, index])          # TODO: map? word.rstrip?
+            cur_b += 1
             index += 1
 
     # TODO: if quote is not closed -- read further
@@ -94,11 +95,12 @@ def lexer(stdin: str) -> List[InterpretString | PlainString]:
     return ret   # TODO: ?????
 
 
-def parser(raw_cmd: list):
-    x = Command
-    if raw_cmd[0] == 'echo':
-        x = EchoCommand(raw_cmd[1])         # TODO: check what argument is received
-    return x
+def parser(lexer_res: List[InterpretString | PlainString]):
+    if lexer_res[0].raw_str.rstrip() == 'echo':
+        x = EchoCommand(lexer_res[1].raw_str)
+        return x
+    else:
+        return Command()
 
 
 def main():
@@ -112,7 +114,7 @@ def main():
             break
 
         lexer_res = lexer(command)
-        obj = parser(lexer_res)         # TODO: exception checking
+        obj = parser(lexer_res)
 
         obj.execute()
 
