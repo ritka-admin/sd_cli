@@ -1,17 +1,7 @@
 from CommandClasses import *
 from StringClasses import *
 
-import subprocess
 from typing import List
-envs = dict()
-
-
-def collect_vars():
-    output = subprocess.check_output('printenv', shell=True).decode()
-    output_list = output.split('\n')
-    for elem in output_list:
-        key, *value = elem.split('=')     # TODO: splitting by '=' produces more than 2 values sometimes
-        envs[key] = value
 
 
 def lexer(stdin: str) -> List[InterpretString | PlainString]:
@@ -75,7 +65,7 @@ def lexer(stdin: str) -> List[InterpretString | PlainString]:
             binary_words[cur_b][0] += word
 
         elif not met_unary and not met_binary:
-            binary_words.append([word, index])          # TODO: map? word.rstrip?
+            binary_words.append([word, index])
             cur_b += 1
             index += 1
 
@@ -83,29 +73,35 @@ def lexer(stdin: str) -> List[InterpretString | PlainString]:
 
     for u in range(len(unary_words)):
         prev = unary_words[u]       # list of two elements
-        unary_words[u] = [PlainString(prev[0]), prev[1]]
+        unary_words[u] = (PlainString(prev[0]), prev[1])
 
     for b in range(len(binary_words)):
         prev = binary_words[b]
-        binary_words[b] = [InterpretString(prev[0]), prev[1]]
+        binary_words[b] = (InterpretString(prev[0]), prev[1])
 
     real_words = unary_words + binary_words
     r_words_sorted = sorted(real_words, key=lambda x: x[1])
     ret = [word[0] for word in r_words_sorted]
     return ret   # TODO: ?????
 
+# ----------------------------------------------------------------
+context = None
+command_constructors = {"echo": EchoCommand.__init__}
+command_list = ["echo", "exit", "pwd", "cat", "wc"]
 
-def parser(lexer_res: List[InterpretString | PlainString]):
-    if lexer_res[0].raw_str.rstrip() == 'echo':
-        x = EchoCommand(lexer_res[1].raw_str)
-        return x
-    else:
-        return Command()
 
+def parser(input: List[InterpretString | PlainString]) -> Command:
+
+    if len(input) == 0 or input[0].raw_str not in command_list:
+        raise Exception
+
+    obj = EchoCommand(input[1].raw_str)
+    return obj
+# ----------------------------------------------------------------
 
 def main():
 
-    collect_vars()
+    envs = dict(os.environ.items())
 
     while True:
         command = input(">> ")
@@ -116,6 +112,7 @@ def main():
         lexer_res = lexer(command)
         obj = parser(lexer_res)
 
+        obj.substitute_vars(envs)
         obj.execute()
 
 
