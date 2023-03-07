@@ -29,60 +29,38 @@ def lexer(stdin: str) -> List[InterpretString | PlainString]:
             obj_list.append(obj)
         return obj_list
 
-    met_unary = False
-    met_binary = False
-    cur_u = 0
-    cur_b = 0
-    index = 0
-    unary_words = []
-    binary_words = []
+    met_mark = None
+    quotes = ["'", '"']
+    words_as_objs = []
+    elem = ''
+
     for word in words:
 
-        if word == "'":
-            if not met_unary:
-                met_unary = True
-                unary_words.append(['', index])
-                index += 1
-            else:
-                met_unary = False
-                cur_u += 1
+        if met_mark is None and word in quotes:
+            if elem:
+                obj = InterpretString(elem.rstrip())
+                words_as_objs.append(obj)
+                elem = ''
+            met_mark = word
             continue
 
-        elif word == '"':
-            if not met_binary:
-                met_binary = True
-                binary_words.append(['', index])
-                index += 1
+        elif word == met_mark:
+            if met_mark == "'":
+                obj = PlainString(elem.rstrip())
             else:
-                met_binary = False
-                cur_b += 1
+                obj = InterpretString(elem.rstrip())
+
+            words_as_objs.append(obj)
+            elem = ''
+            met_mark = None
             continue
 
-        if met_unary:
-            unary_words[cur_u][0] += word
-
-        elif met_binary:
-            binary_words[cur_b][0] += word
-
-        elif not met_unary and not met_binary:
-            binary_words.append([word, index])
-            cur_b += 1
-            index += 1
+        elem += word
 
     # TODO: if quote is not closed -- read further
 
-    for u in range(len(unary_words)):
-        prev = unary_words[u]       # list of two elements
-        unary_words[u] = (PlainString(prev[0]), prev[1])
+    return words_as_objs
 
-    for b in range(len(binary_words)):
-        prev = binary_words[b]
-        binary_words[b] = (InterpretString(prev[0]), prev[1])
-
-    real_words = unary_words + binary_words
-    r_words_sorted = sorted(real_words, key=lambda x: x[1])
-    ret = [word[0] for word in r_words_sorted]
-    return ret   # TODO: ?????
 
 # ----------------------------------------------------------------
 context = None

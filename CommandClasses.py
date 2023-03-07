@@ -23,10 +23,9 @@ class EchoCommand(Command):
                 try:
                     value = envs[self.arg.raw_str[1:]]
                     self.arg = value
-                    return
                 except KeyError:
                     print("")
-                    return
+                return
         self.arg = self.arg.raw_str
 
     def execute(self):
