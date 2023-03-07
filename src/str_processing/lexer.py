@@ -1,5 +1,4 @@
-from CommandClasses import *
-from StringClasses import *
+from src.classes.StringClasses import *
 
 from typing import List
 
@@ -60,40 +59,3 @@ def lexer(stdin: str) -> List[InterpretString | PlainString]:
     # TODO: if quote is not closed -- read further
 
     return words_as_objs
-
-
-# ----------------------------------------------------------------
-context = None
-command_constructors = {"echo": EchoCommand.__init__}
-command_list = ["echo", "exit", "pwd", "cat", "wc"]
-
-
-def parser(input: List[InterpretString | PlainString]) -> Command:
-
-    if len(input) == 0 or input[0].raw_str.rstrip() not in command_list:
-        raise Exception
-
-    obj = EchoCommand(input[1])
-    return obj
-# ----------------------------------------------------------------
-
-
-def main():
-
-    envs = dict(os.environ.items())
-
-    while True:
-        command = input(">> ")
-
-        if command == 'exit':
-            break
-
-        lexer_res = lexer(command)
-        obj = parser(lexer_res)
-
-        obj.substitute_vars(envs)
-        obj.execute()
-
-
-if __name__ == '__main__':
-    main()

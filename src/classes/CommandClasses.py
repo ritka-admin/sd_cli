@@ -1,6 +1,5 @@
-import os
 from typing import Union
-from StringClasses import *
+from src.classes.StringClasses import *
 
 
 class Command:
@@ -30,3 +29,16 @@ class EchoCommand(Command):
 
     def execute(self):
         print(self.arg)   # TODO: ok?
+
+
+class VarAssignment(Command):
+
+    def __init__(self, var, value):
+        self.var = var
+        self.value = value
+
+    def substitute_vars(self, envs: dict):
+        envs[self.var] = self.value
+
+    def execute(self):
+        pass
