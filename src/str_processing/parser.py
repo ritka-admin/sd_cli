@@ -1,5 +1,9 @@
 from src.classes.StringClass import *
 from src.classes.CommandClass import *
+# import sys
+# sys.path.append("..")
+# from classes.CommandClass import *
+# from classes.StringClass import *
 
 from typing import List
 
@@ -11,8 +15,9 @@ command_constructors = {
     "pwd": PwdCommand,
     "cat": CatCommand,
     "wc": WcCommand,
+    "=" : VarAssignment
 }
-command_list = ["echo", "exit", "pwd", "cat", "wc"]
+command_list = ["echo", "exit", "pwd", "cat", "wc", "="]
 
 
 class InputError(Exception):
@@ -24,15 +29,17 @@ class InputError(Exception):
         self.msg = "Command not found!"
 
 
-def parser(lexer_res: List[List[InterpretString | PlainString]]) -> Command:
+def parser(input: List[InterpretString | PlainString]) -> Command:
     """
     Parses string of command to an object of CommandClass class.
 
-    :param lexer_res: one lexem between pypes
-    result: CommandClass if command is valid
+    Parameters:
+        input: one lexem between pypes
+    Returns:
+        CommandClass if command is valid
     """
-    if len(lexer_res) == 0 or lexer_res[0][0].raw_str not in command_list:      # TODO: VarAssignment
+    if len(input) == 0 or input[0].raw_str not in command_list:      # TODO: VarAssignment
         raise InputError
-
-    obj = command_constructors[lexer_res[0][0].raw_str](lexer_res[0][1])
+    
+    obj = command_constructors[input[0].raw_str](input[1])
     return obj

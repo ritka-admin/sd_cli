@@ -1,4 +1,7 @@
 from src.classes.StringClass import *
+# import sys
+# sys.path.append("..")
+# from classes.CommandClass import *
 
 from typing import List
 

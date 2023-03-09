@@ -1,14 +1,26 @@
 from abc import abstractmethod
-from src.classes.ChannelClass import *
-from src.classes.StringClass import *
-
+# import sys
+# sys.path.append("..")
+# from classes.ChannelClass import *
+# from classes.StringClass import *
+from ChannelClass import *
+from StringClass import *
+import subprocess
 from typing import Union
 
 
 class Command:
 
     def substitute_vars(self, envs):
-        pass
+        if isinstance(self.arg, InterpretString):
+            if self.arg.raw_str[0] == '$':
+                try:
+                    value = envs[self.arg.raw_str[1:]]
+                    self.arg = value
+                except KeyError:
+                    print("")
+                return
+        self.arg = self.arg.raw_str
 
     @abstractmethod
     def execute(self, input_channel, output_channel) -> None:
@@ -43,35 +55,84 @@ class EchoCommand(Command):
 
 
 class ExitCommand(Command):
-    def __init__(self, args: str) -> None:
-        self.args = args
+    def __init__(self, arg: Union[InterpretString | PlainString]) -> None:
+        self.arg = arg
+    
+    def substitute_vars(self, envs):
+        if isinstance(self.arg, InterpretString):
+            if self.arg.raw_str[0] == '$':
+                try:
+                    value = envs[self.arg.raw_str[1:]]
+                    self.arg = value
+                except KeyError:
+                    print("")
+                return
+        self.arg = self.arg.raw_str
 
-    def execute_(self) -> None:
-        pass
+    def execute(self, InCh: Channel, OutCh: Channel) -> None|Exception:
+        result = subprocess.run("exit", shell=True, check=True)
+        raise Exception
 
 
 class PwdCommand(Command):
-    def __init__(self, args: str) -> None:
-        self.args = args
+    def __init__(self, arg: Union[InterpretString | PlainString]) -> None:
+        self.arg = arg
+    
+    def substitute_vars(self, envs):
+        if isinstance(self.arg, InterpretString):
+            if self.arg.raw_str[0] == '$':
+                try:
+                    value = envs[self.arg.raw_str[1:]]
+                    self.arg = value
+                except KeyError:
+                    print("")
+                return
+        self.arg = self.arg.raw_str
 
-    def execute(self) -> None:
-        pass
+    def execute(self, InCh: Channel, OutCh: Channel) -> None:
+        result = subprocess.run(["pwd"], capture_output=True)
+        OutCh.writeline(result.stdout.decode())
 
 
 class CatCommand(Command):
-    def __init__(self, args: str) -> None:
-        self.args = args
+    def __init__(self, arg: Union[InterpretString | PlainString]) -> None:
+        self.arg = arg
+    
+    def substitute_vars(self, envs):
+        if isinstance(self.arg, InterpretString):
+            if self.arg.raw_str[0] == '$':
+                try:
+                    value = envs[self.arg.raw_str[1:]]
+                    self.arg = value
+                except KeyError:
+                    print("")
+                return
+        self.arg = self.arg.raw_str
 
-    def execute(self) -> None:
-        pass
+    def execute(self, InCh: Channel, OutCh: Channel) -> None:
+        result = subprocess.run(["cat", self.arg],  capture_output=True)
+        OutCh.writeline(result.stdout.decode())
 
 
 class WcCommand(Command):
-    def __init__(self, args: str) -> None:
-        self.args = args
+    def __init__(self, arg: Union[InterpretString | PlainString]) -> None:
+        self.arg = arg
+    
+    def substitute_vars(self, envs):
+        if isinstance(self.arg, InterpretString):
+            if self.arg.raw_str[0] == '$':
+                try:
+                    value = envs[self.arg.raw_str[1:]]
+                    self.arg = value
+                except KeyError:
+                    print("")
+                return
+        self.arg = self.arg.raw_str
 
-    def execute(self) -> None:
-        pass
+    def execute(self, InCh: Channel, OutCh: Channel) -> None:
+        result = subprocess.run(["wc", self.arg],  capture_output=True)
+        OutCh.writeline(result.stdout.decode())
+
 
 
 class VarAssignment(Command):

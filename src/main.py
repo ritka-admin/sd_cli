@@ -1,5 +1,4 @@
 import os
-
 from str_processing.visitor import visitor
 
 
@@ -9,8 +8,10 @@ def main():
 
     while True:
         command = input(">> ")
-
-        visitor(command, envs)
+        try:
+            visitor(command, envs)
+        except Exception:
+            break
 
 
 if __name__ == '__main__':
