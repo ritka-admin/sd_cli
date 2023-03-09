@@ -12,15 +12,6 @@ def main():
 
         visitor(command, envs)
 
-        # if command == 'exit':
-        #     break
-        #
-        # lexer_res = lexer(command)
-        # obj = parser(lexer_res)
-        #
-        # obj.substitute_vars(envs)
-        # obj.execute()
-
 
 if __name__ == '__main__':
     main()
