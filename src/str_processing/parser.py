@@ -1,12 +1,14 @@
-from src.classes.CommandClass import *
+import sys
+sys.path.append("..")
+from classes.CommandClass import *
 
 context = None
 command_constructors = {
-    "echo": EchoCommand.__init__,
-    "exit": ExitCommand.__init__,
-    "pwd": PwdCommand.__init__,
-    "cat": CatCommand.__init__,
-    "wc": WcCommand.__init__,
+    "echo": EchoCommand,
+    "exit": ExitCommand,
+    "pwd": PwdCommand,
+    "cat": CatCommand,
+    "wc": WcCommand,
 }
 command_list = ["echo", "exit", "pwd", "cat", "wc"]
 
@@ -30,5 +32,5 @@ def parser_bash(input: list) -> CommandClass:
     if len(input) == 0 or input[0] not in command_list:
         raise InputError
 
-    object = command_constructors[input[0]](input[0:])
+    object = command_constructors[input[0]](input[1] ) #Сделать приведение к обычным строкам (input[1].__str__() )
     return object
