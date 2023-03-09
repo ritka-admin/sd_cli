@@ -7,7 +7,7 @@ class Channel:
     def readline(self) -> str:
         pass
 
-    def writeline(self, string: str):
+    def writeline(self, string: str) ->None:
         pass
 
 
@@ -19,7 +19,7 @@ class StdChannel(Channel):
         strline = input()
         return strline
 
-    def writeline(self, string: str):
+    def writeline(self, string: str) ->None:
         print(string)
 
 
@@ -30,5 +30,5 @@ class PipeChannel(Channel):
     def readline(self):
         return self.args
 
-    def writeline(self, string: str):
+    def writeline(self, string: str) ->None:
         self.args = string

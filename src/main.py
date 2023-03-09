@@ -1,5 +1,4 @@
 import os
-
 from str_processing.visitor import visitor
 
 
@@ -9,18 +8,10 @@ def main():
 
     while True:
         command = input(">> ")
-
-        visitor(command, envs)
-
-        # if command == 'exit':
-        #     break
-        #
-        # lexer_res = lexer(command)
-        # obj = parser(lexer_res)
-        #
-        # obj.substitute_vars(envs)
-        # obj.execute()
-
+        try:
+            visitor(command, envs)
+        except Exception:
+            break
 
 if __name__ == '__main__':
     main()
