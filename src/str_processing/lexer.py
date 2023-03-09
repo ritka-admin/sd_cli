@@ -4,6 +4,13 @@ from typing import List
 
 
 def lexer(stdin: str) -> List[List[InterpretString | PlainString]]:
+    """
+    :param stdin:
+
+    Returns:
+      if there is a pipe in a raw_command, parser will need
+      separate commands as separate lists
+    """
     words = []
 
     start = 0
@@ -63,4 +70,4 @@ def lexer(stdin: str) -> List[List[InterpretString | PlainString]]:
     lexer_res = []
     lexer_res.append(words_as_objs)
 
-    return lexer_res      # TODO: костыль для пайпа
+    return lexer_res
