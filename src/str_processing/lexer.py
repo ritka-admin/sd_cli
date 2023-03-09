@@ -1,9 +1,9 @@
-from src.classes.StringClasses import *
+from src.classes.StringClass import *
 
 from typing import List
 
 
-def lexer(stdin: str) -> List[InterpretString | PlainString]:
+def lexer(stdin: str) -> List[List[InterpretString | PlainString]]:
     words = []
 
     start = 0
@@ -26,7 +26,9 @@ def lexer(stdin: str) -> List[InterpretString | PlainString]:
         for i in range(len(words)):
             obj = InterpretString(words[i])
             obj_list.append(obj)
-        return obj_list
+        lexer_res = []
+        lexer_res.append(obj_list)
+        return lexer_res
 
     met_mark = None
     quotes = ["'", '"']
@@ -58,4 +60,7 @@ def lexer(stdin: str) -> List[InterpretString | PlainString]:
 
     # TODO: if quote is not closed -- read further
 
-    return words_as_objs
+    lexer_res = []
+    lexer_res.append(words_as_objs)
+
+    return lexer_res      # TODO: костыль для пайпа

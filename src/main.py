@@ -1,9 +1,10 @@
 import os
 
-from classes.CommandClasses import *
+from classes.CommandClass import *
 
 from str_processing.lexer import lexer
 from str_processing.parser import parser
+from str_processing.visitor import visitor
 
 
 def main():
@@ -13,15 +14,25 @@ def main():
     while True:
         command = input(">> ")
 
-        if command == 'exit':
-            break
+        visitor(command, envs)
 
-        lexer_res = lexer(command)
-        obj = parser(lexer_res)
-
-        obj.substitute_vars(envs)
-        obj.execute()
+        # if command == 'exit':
+        #     break
+        #
+        # lexer_res = lexer(command)
+        # obj = parser(lexer_res)
+        #
+        # obj.substitute_vars(envs)
+        # obj.execute()
 
 
 if __name__ == '__main__':
     main()
+
+
+# `parser` insted of `parser_bash`
+# VarAssignment in parser `command_list`
+# __init__ in the interfaces (not needed)
+# how to use visitor?
+# mark all methods as abstract methods in interfaces?
+# TODO: type annotations
