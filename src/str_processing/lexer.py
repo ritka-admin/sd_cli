@@ -1,7 +1,4 @@
 from src.classes.StringClass import *
-# import sys
-# sys.path.append("..")
-# from classes.CommandClass import *
 
 from typing import List
 
@@ -32,12 +29,14 @@ def lexer(stdin: str) -> List[List[InterpretString | PlainString]]:
     # if there are no quotes in stdin
     if not start and len(stdin):
         words = stdin.split()
+        if len(words) == 1 and '=' in stdin:
+            words = stdin.split('=')
+            words.insert(0, '=')
         obj_list = []
         for i in range(len(words)):
             obj = InterpretString(words[i])
             obj_list.append(obj)
-        lexer_res = []
-        lexer_res.append(obj_list)
+        lexer_res = [obj_list]
         return lexer_res
 
     met_mark = None
@@ -70,7 +69,6 @@ def lexer(stdin: str) -> List[List[InterpretString | PlainString]]:
 
     # TODO: if quote is not closed -- read further
 
-    lexer_res = []
-    lexer_res.append(words_as_objs)
+    lexer_res = [words_as_objs]
 
     return lexer_res

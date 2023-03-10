@@ -7,7 +7,7 @@ class Channel:
     def readline(self) -> str:
         pass
 
-    def writeline(self, string: str) ->None:
+    def writeline(self, string: str) -> None:
         pass
 
 

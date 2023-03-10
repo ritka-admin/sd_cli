@@ -2,13 +2,7 @@ from src.str_processing.lexer import *
 from src.str_processing.parser import *
 
 
-# import sys
-# sys.path.append("..")
-# from str_processing.lexer import *
-# from str_processing.parser import *
-
-
-def visitor(raw_user_str: str, envs: dict):
+def visitor(raw_user_str: str, envs: dict) -> None:
     lexer_res = lexer(raw_user_str)
     size = len(lexer_res)
     for i in range(size):
@@ -22,5 +16,5 @@ def visitor(raw_user_str: str, envs: dict):
         else:
             outCh = PipeChannel()
         parser_res: Command = parser(lexer_res[i])
-        parser_res.substitute_vars(envs)
+        envs = parser_res.substitute_vars(envs)
         parser_res.execute(inCh, outCh)

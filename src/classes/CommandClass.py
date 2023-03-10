@@ -1,17 +1,13 @@
-from abc import abstractmethod
-# import sys
-# sys.path.append("..")
-# from classes.ChannelClass import *
-# from classes.StringClass import *
-from ChannelClass import *
-from StringClass import *
+from src.classes.ChannelClass import *
+from src.classes.StringClass import *
+from src.classes.ExceptionClass import SpecialExitException
 import subprocess
-from typing import Union
+from typing import Union, List
 
 
 class Command:
 
-    def substitute_vars(self, envs):
+    def substitute_vars(self, envs: dict):
         if isinstance(self.arg, InterpretString):
             if self.arg.raw_str[0] == '$':
                 try:
@@ -28,19 +24,11 @@ class Command:
 
 
 class EchoCommand(Command):
-    def __init__(self, arg: Union[InterpretString | PlainString]) -> None:
-        self.arg = arg
+    def __init__(self, arg: List[InterpretString | PlainString]):
+        self.arg, = arg
 
     def substitute_vars(self, envs):
-        if isinstance(self.arg, InterpretString):
-            if self.arg.raw_str[0] == '$':
-                try:
-                    value = envs[self.arg.raw_str[1:]]
-                    self.arg = value
-                except KeyError:
-                    print("")
-                return
-        self.arg = self.arg.raw_str
+        super().substitute_vars(envs)
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
@@ -55,39 +43,22 @@ class EchoCommand(Command):
 
 
 class ExitCommand(Command):
-    def __init__(self, arg: Union[InterpretString | PlainString]) -> None:
-        self.arg = arg
+    def __init__(self, arg: List[InterpretString | PlainString]):
+        self.arg = None
     
     def substitute_vars(self, envs):
-        if isinstance(self.arg, InterpretString):
-            if self.arg.raw_str[0] == '$':
-                try:
-                    value = envs[self.arg.raw_str[1:]]
-                    self.arg = value
-                except KeyError:
-                    print("")
-                return
-        self.arg = self.arg.raw_str
+        pass
 
-    def execute(self, InCh: Channel, OutCh: Channel) -> None|Exception:
-        result = subprocess.run("exit", shell=True, check=True)
-        raise Exception
+    def execute(self, InCh: Channel, OutCh: Channel) -> None | SpecialExitException:
+        raise SpecialExitException
 
 
 class PwdCommand(Command):
-    def __init__(self, arg: Union[InterpretString | PlainString]) -> None:
-        self.arg = arg
+    def __init__(self, arg: List[InterpretString | PlainString]) -> None:
+        self.arg = None
     
     def substitute_vars(self, envs):
-        if isinstance(self.arg, InterpretString):
-            if self.arg.raw_str[0] == '$':
-                try:
-                    value = envs[self.arg.raw_str[1:]]
-                    self.arg = value
-                except KeyError:
-                    print("")
-                return
-        self.arg = self.arg.raw_str
+        pass
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         result = subprocess.run(["pwd"], capture_output=True)
@@ -95,19 +66,11 @@ class PwdCommand(Command):
 
 
 class CatCommand(Command):
-    def __init__(self, arg: Union[InterpretString | PlainString]) -> None:
-        self.arg = arg
+    def __init__(self, arg: List[InterpretString | PlainString]):
+        self.arg, = arg
     
     def substitute_vars(self, envs):
-        if isinstance(self.arg, InterpretString):
-            if self.arg.raw_str[0] == '$':
-                try:
-                    value = envs[self.arg.raw_str[1:]]
-                    self.arg = value
-                except KeyError:
-                    print("")
-                return
-        self.arg = self.arg.raw_str
+        super().substitute_vars(envs)
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         result = subprocess.run(["cat", self.arg],  capture_output=True)
@@ -115,31 +78,23 @@ class CatCommand(Command):
 
 
 class WcCommand(Command):
-    def __init__(self, arg: Union[InterpretString | PlainString]) -> None:
-        self.arg = arg
+    def __init__(self, arg: List[InterpretString | PlainString]):
+        self.arg, = arg
     
-    def substitute_vars(self, envs):
-        if isinstance(self.arg, InterpretString):
-            if self.arg.raw_str[0] == '$':
-                try:
-                    value = envs[self.arg.raw_str[1:]]
-                    self.arg = value
-                except KeyError:
-                    print("")
-                return
-        self.arg = self.arg.raw_str
+    def substitute_vars(self, envs: dict):
+        super().substitute_vars(envs)
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         result = subprocess.run(["wc", self.arg],  capture_output=True)
         OutCh.writeline(result.stdout.decode())
 
 
-
 class VarAssignment(Command):
 
-    def __init__(self, var, value):
-        self.var = var
-        self.value = value
+    def __init__(self, args: List[InterpretString | PlainString]):
+        self.args = args
+        self.var = args[0].raw_str
+        self.value = args[1].raw_str
 
     def substitute_vars(self, envs: dict):
         envs[self.var] = self.value

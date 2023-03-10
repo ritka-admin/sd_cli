@@ -1,9 +1,5 @@
-from src.classes.StringClass import *
 from src.classes.CommandClass import *
-# import sys
-# sys.path.append("..")
-# from classes.CommandClass import *
-# from classes.StringClass import *
+from src.classes.ExceptionClass import InputError
 
 from typing import List
 
@@ -15,18 +11,9 @@ command_constructors = {
     "pwd": PwdCommand,
     "cat": CatCommand,
     "wc": WcCommand,
-    "=" : VarAssignment
+    "=": VarAssignment
 }
 command_list = ["echo", "exit", "pwd", "cat", "wc", "="]
-
-
-class InputError(Exception):
-    """
-    Base exception for parser
-    """
-
-    def __init__(self):
-        self.msg = "Command not found!"
 
 
 def parser(input: List[InterpretString | PlainString]) -> Command:
@@ -38,8 +25,8 @@ def parser(input: List[InterpretString | PlainString]) -> Command:
     Returns:
         CommandClass if command is valid
     """
-    if len(input) == 0 or input[0].raw_str not in command_list:      # TODO: VarAssignment
+    if len(input) == 0 or input[0].raw_str not in command_list:
         raise InputError
     
-    obj = command_constructors[input[0].raw_str](input[1])
+    obj = command_constructors[input[0].raw_str](input[1:])
     return obj

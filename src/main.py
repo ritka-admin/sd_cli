@@ -1,5 +1,6 @@
 import os
 from str_processing.visitor import visitor
+from src.classes.ExceptionClass import SpecialExitException, InputError
 
 
 def main():
@@ -10,7 +11,9 @@ def main():
         command = input(">> ")
         try:
             visitor(command, envs)
-        except Exception:
+        except InputError:
+            print("Invalid command")
+        except SpecialExitException:
             break
 
 
@@ -18,6 +21,4 @@ if __name__ == '__main__':
     main()
 
 
-# TODO: VarAssignment in parser `command_list`
 # TODO: mark all methods as abstract methods in interfaces?
-# TODO: type annotations
