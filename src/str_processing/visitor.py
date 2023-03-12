@@ -3,6 +3,13 @@ from src.str_processing.parser import *
 
 
 def visitor(raw_user_str: str, envs: dict) -> None:
+    """
+    Executes users command and writes it.
+
+    Parameters:
+        raw_user_str: command typed by user
+        envs: environment variables in system
+    """
     lexer_res = lexer(raw_user_str)
     size = len(lexer_res)
     for i in range(size):

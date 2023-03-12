@@ -1,4 +1,3 @@
-
 class InputError(Exception):
     """
     Base exception for parser
@@ -9,7 +8,9 @@ class InputError(Exception):
 
 
 class SpecialExitException(Exception):
+    """
+    Exception for meeting an "exit" command and exiting terminal.
+    """
 
     def __init__(self):
         pass
-

@@ -4,7 +4,9 @@ from src.classes.ExceptionClass import SpecialExitException, InputError
 
 
 def main():
-
+    """
+    Main function for reading users commands and executing them.
+    """
     envs = dict(os.environ.items())
 
     while True:
@@ -17,7 +19,7 @@ def main():
             break
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
 
 

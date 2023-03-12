@@ -29,9 +29,9 @@ def lexer(stdin: str) -> List[List[InterpretString | PlainString]]:
     # if there are no quotes in stdin
     if not start and len(stdin):
         words = stdin.split()
-        if len(words) == 1 and '=' in stdin:
-            words = stdin.split('=')
-            words.insert(0, '=')
+        if len(words) == 1 and "=" in stdin:
+            words = stdin.split("=")
+            words.insert(0, "=")
         obj_list = []
         for i in range(len(words)):
             obj = InterpretString(words[i])
@@ -42,7 +42,7 @@ def lexer(stdin: str) -> List[List[InterpretString | PlainString]]:
     met_mark = None
     quotes = ["'", '"']
     words_as_objs = []
-    elem = ''
+    elem = ""
 
     for word in words:
 
@@ -50,7 +50,7 @@ def lexer(stdin: str) -> List[List[InterpretString | PlainString]]:
             if elem:
                 obj = InterpretString(elem.rstrip())
                 words_as_objs.append(obj)
-                elem = ''
+                elem = ""
             met_mark = word
             continue
 
@@ -61,7 +61,7 @@ def lexer(stdin: str) -> List[List[InterpretString | PlainString]]:
                 obj = InterpretString(elem.rstrip())
 
             words_as_objs.append(obj)
-            elem = ''
+            elem = ""
             met_mark = None
             continue
 
