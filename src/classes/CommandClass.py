@@ -1,6 +1,13 @@
-from src.classes.ChannelClass import *
-from src.classes.StringClass import *
-from src.classes.ExceptionClass import SpecialExitException
+import sys
+
+sys.path.append("..")
+from classes.ChannelClass import *
+from classes.StringClass import *
+from classes.ExceptionClass import *
+
+# from src.classes.ChannelClass import *
+# from src.classes.StringClass import *
+# from src.classes.ExceptionClass import SpecialExitException
 import subprocess
 from typing import Union, List
 
@@ -10,21 +17,21 @@ class Command:
     Abstract class for commands to execute them.
     """
 
-    def substitute_vars(self, envs: dict) -> None:
-        """
-        Method to substitute variable if need
-        Parameters:
-        envs: dict of environment variables in system
-        """
-        if isinstance(self.arg, InterpretString):
-            if self.arg.raw_str[0] == "$":
-                try:
-                    value = envs[self.arg.raw_str[1:]]
-                    self.arg = value
-                except KeyError:
-                    print("")
-                return
-        self.arg = self.arg.raw_str
+    # def substitute_vars(self, envs: dict) -> None:
+    #     """
+    #     Method to substitute variable if need
+    #     Parameters:
+    #     envs: dict of environment variables in system
+    #     """
+    #     if isinstance(self.arg, InterpretString):
+    #         if self.arg.raw_str[0] == "$":
+    #             try:
+    #                 value = envs[self.arg.raw_str[1:]]
+    #                 self.arg = value
+    #             except KeyError:
+    #                 print("")
+    #             return
+    #     self.arg = self.arg.raw_str
 
     @abstractmethod
     def execute(self, input_channel: Channel, output_channel: Channel) -> None:
@@ -42,10 +49,10 @@ class EchoCommand(Command):
         Parameters:
         arg: list of InterpretString or PlainString
         """
-        (self.arg,) = arg
+        self.arg = arg
 
-    def substitute_vars(self, envs):
-        super().substitute_vars(envs)
+    # def substitute_vars(self, envs):
+    #     super().substitute_vars(envs)
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
@@ -56,7 +63,7 @@ class EchoCommand(Command):
         """
         if not self.arg:
             self.arg = InCh.readline()
-        OutCh.writeline(self.arg)
+        OutCh.writeline(''.join([el.raw_str for el in self.arg]))
 
 
 class ExitCommand(Command):
@@ -69,8 +76,8 @@ class ExitCommand(Command):
         """
         self.arg = None
 
-    def substitute_vars(self, envs):
-        pass
+    # def substitute_vars(self, envs):
+    #     pass
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None | SpecialExitException:
         """
@@ -91,8 +98,8 @@ class PwdCommand(Command):
         """
         self.arg = None
 
-    def substitute_vars(self, envs):
-        pass
+    # def substitute_vars(self, envs):
+    #     pass
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
@@ -114,8 +121,8 @@ class CatCommand(Command):
         """
         (self.arg,) = arg
 
-    def substitute_vars(self, envs):
-        super().substitute_vars(envs)
+    # def substitute_vars(self, envs):
+    #     super().substitute_vars(envs)
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
@@ -137,8 +144,8 @@ class WcCommand(Command):
         """
         (self.arg,) = arg
 
-    def substitute_vars(self, envs: dict):
-        super().substitute_vars(envs)
+    # def substitute_vars(self, envs: dict):
+    #     super().substitute_vars(envs)
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
@@ -162,8 +169,8 @@ class VarAssignment(Command):
         self.var = args[0].raw_str
         self.value = args[1].raw_str
 
-    def substitute_vars(self, envs: dict):
-        envs[self.var] = self.value
+    # def substitute_vars(self, envs: dict):
+    #     envs[self.var] = self.value
 
     def execute(self, input_channel=None, output_channel=None):
         """

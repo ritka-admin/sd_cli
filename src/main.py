@@ -1,6 +1,6 @@
 import os
 from str_processing.visitor import visitor
-from src.classes.ExceptionClass import SpecialExitException, InputError
+from classes.ExceptionClass import SpecialExitException, InputError
 
 
 def main():
@@ -8,6 +8,8 @@ def main():
     Main function for reading users commands and executing them.
     """
     envs = dict(os.environ.items())
+    envs["x"]="ex"
+    envs["y"]="it"
 
     while True:
         command = input(">> ")

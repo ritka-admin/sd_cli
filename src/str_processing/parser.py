@@ -1,5 +1,11 @@
-from src.classes.CommandClass import *
-from src.classes.ExceptionClass import InputError
+import sys
+
+sys.path.append("..")
+from classes.CommandClass import *
+from classes.ExceptionClass import *
+
+# from src.classes.CommandClass import *
+# from src.classes.ExceptionClass import InputError
 
 from typing import List
 
