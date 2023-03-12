@@ -4,11 +4,11 @@ from src.str_processing.parser import *
 
 def visitor(raw_user_str: str, envs: dict) -> None:
     """
-    Executes users command and writes it.
+    Executes users command and prints the result.
 
     Parameters:
-        raw_user_str: command typed by user
-        envs: environment variables in system
+        raw_user_str: command input by user
+        envs: environment variables in the system
     """
     lexer_res = lexer(raw_user_str)
     size = len(lexer_res)

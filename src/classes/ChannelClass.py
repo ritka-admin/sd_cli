@@ -27,7 +27,7 @@ class StdChannel(Channel):
         Method for reading from stdin.
 
         Returns:
-            String that was readed
+            String that was read
         """
         strline = input()
         return strline
@@ -43,7 +43,7 @@ class StdChannel(Channel):
 
 class PipeChannel(Channel):
     """
-    Class for reading and writing from(to) output(input) of other command
+    Class for reading and writing from(to) output(input) of another command
     """
 
     def __init__(self):
@@ -51,10 +51,10 @@ class PipeChannel(Channel):
 
     def readline(self):
         """
-        Method for reading from stdin of other command.
+        Method for reading from stdin of another command.
 
         Returns:
-            String that was readed
+            String that was read
         """
         return self.args
 
@@ -63,6 +63,6 @@ class PipeChannel(Channel):
         Method for writing to input of another command.
 
         Parameters:
-            string: string to input of another command.
+            string: string to input to another command.
         """
         self.args = string

@@ -1,6 +1,6 @@
 class PlainString:
     """
-    Class for string in single quotes.
+    Class for a string in single quotes.
     """
 
     def __init__(self, raw_str):
@@ -9,7 +9,7 @@ class PlainString:
 
 class InterpretString:
     """
-    Class for string in double quotes or without quotes.
+    Class for a string in double quotes or without quotes.
     """
 
     def __init__(self, raw_str):

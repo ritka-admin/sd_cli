@@ -21,9 +21,9 @@ def parser(lex_str: List[InterpretString | PlainString]) -> Command:
     Parses string of command to an object of CommandClass class.
 
     Parameters:
-        lex_str: one lexem between pypes
+        lex_str: list of lexical tokens of a command between pipes
     Returns:
-        CommandClass if command is valid
+        CommandClass object if the command is valid
     """
     if len(lex_str) == 0 or lex_str[0].raw_str not in command_list:
         raise InputError
