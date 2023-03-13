@@ -23,6 +23,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# TODO: mark all methods as abstract methods in interfaces?

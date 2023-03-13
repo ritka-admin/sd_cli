@@ -1,12 +1,7 @@
-import sys
-
-sys.path.append("..")
-from str_processing.lexer import *
-from str_processing.parser import *
-from str_processing.substitute_vars import *
-
-# from src.str_processing.lexer import *
-# from src.str_processing.parser import *
+from src.str_processing.lexer import *
+from src.str_processing.parser import *
+from src.classes.ChannelClass import *
+from src.str_processing.substitute_vars import *
 
 
 def visitor(raw_user_str: str, envs: dict) -> None:
@@ -31,6 +26,10 @@ def visitor(raw_user_str: str, envs: dict) -> None:
             outCh = StdChannel()
         else:
             outCh = PipeChannel()
-        parser_res: Command = parser(lexer_res[i])
+        try:
+            parser_res: Command = parser(lexer_res[i])
+            parser_res.execute(inCh, outCh)
+        except InputError as e:
+            outCh.writeline(e.msg)
         # envs = parser_res.substitute_vars(envs)
-        parser_res.execute(inCh, outCh)
+        

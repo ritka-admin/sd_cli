@@ -1,9 +1,4 @@
-import sys
-
-sys.path.append("..")
-from classes.StringClass import *
-
-# from src.classes.StringClass import *
+from src.classes.StringClass import *
 
 from typing import List
 

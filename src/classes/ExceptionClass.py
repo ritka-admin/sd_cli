@@ -3,8 +3,8 @@ class InputError(Exception):
     Base exception for parser
     """
 
-    def __init__(self):
-        self.msg = "Command not found!"
+    def __init__(self, msg):
+        self.msg = msg + ": команда не найдена"
 
 
 class SpecialExitException(Exception):
