@@ -1,4 +1,4 @@
-
+import pytest
 from src.str_processing.lexer import lexer
 from src.classes.StringClass import InterpretString, PlainString
 
