@@ -23,7 +23,8 @@ def test_one_key():
 # def test_empty_key(self):
 #     arg = [[InterpretString("$x$y"), PlainString("echo"), PlainString("hello")]]
 #     envs = {}
-#     assert substitute_vars(arg, envs)== "echo hello"
+#     assert substitute_vars(arg, envs) == "echo hello"
+
 
 def test_non_vars():
     arg = [[InterpretString("echo"), InterpretString("hello")]]
@@ -36,7 +37,8 @@ def test_out_range():
     envs = {"x": "ex", "y": "it"}
     assert substitute_vars(arg, envs) == 'acexit$ echo hello'
 
-# def test_single_quotes(self):
+
+# def test_single_quotes():
 #     arg = [[InterpretString("'ac'$x'abc'"), InterpretString("echo")]]
 #     envs = {"x": "ex", "y": "it"}
 #     assert substitute_vars(arg, envs) == 'acexabc echo'

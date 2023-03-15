@@ -2,8 +2,7 @@ from src.classes.StringClass import *
 
 from typing import List
 
-
-def lexer(stdin: str) -> List[List[InterpretString | PlainString]]:
+def lexer(stdin: str, prev_res=None, mark=None) -> List[List[InterpretString | PlainString]]:
     """
     :param stdin:
 
@@ -11,64 +10,46 @@ def lexer(stdin: str) -> List[List[InterpretString | PlainString]]:
       if there is a pipe in a raw_command, parser will need
       separate commands as separate lists
     """
-    words = []
+    words = [] if prev_res is None else prev_res
+    met_mark = None if mark is None else mark
 
     start = 0
     for i in range(len(stdin)):
 
-        if stdin[i] == "'":
-            words.append(stdin[start:i])
+        prev = max(0, i-1)
+
+        if stdin[i] == "'" and met_mark is None and stdin[prev] == " ":
+            if i != 0:
+                words.append(InterpretString(stdin[start:i]))
             start = i + 1
-            words.append("'")
+            met_mark = "'"
 
-        elif stdin[i] == '"':
-            words.append(stdin[start:i])
+        elif stdin[i] == '"' and met_mark is None and stdin[prev] == " ":
+            if i != 0:
+                words.append(InterpretString(stdin[start:i]))
             start = i + 1
-            words.append('"')
+            met_mark = '"'
 
-    # if there are no quotes in stdin
-    if not start and len(stdin):
-        words = stdin.split()
-        if len(words) == 1 and "=" in stdin:
-            words = stdin.split("=")
-            words.insert(0, "=")
-        obj_list = []
-        for i in range(len(words)):
-            obj = InterpretString(words[i])
-            obj_list.append(obj)
-        lexer_res = [obj_list]
-        return lexer_res
-
-    met_mark = None
-    quotes = ["'", '"']
-    words_as_objs = []
-    elem = ""
-
-    for word in words:
-
-        if met_mark is None and word in quotes:
-            if elem:
-                obj = InterpretString(elem.rstrip())
-                words_as_objs.append(obj)
-                elem = ""
-            met_mark = word
-            continue
-
-        elif word == met_mark:
+        elif stdin[i] == met_mark:
             if met_mark == "'":
-                obj = PlainString(elem.rstrip())
+                words.append(PlainString(stdin[start:i]))
             else:
-                obj = InterpretString(elem.rstrip())
-
-            words_as_objs.append(obj)
-            elem = ""
+                words.append(InterpretString(stdin[start:i]))
+            start = i + 1
             met_mark = None
-            continue
 
-        elem += word
+    # if no quote was met
+    if met_mark is None and len(words) == 0:
+        words = stdin.split()
+        obj_list = [InterpretString(obj) for obj in words]
+        return [obj_list]
 
-    # TODO: if quote is not closed -- read further
+    if met_mark is not None:
+        inner = PlainString(stdin[start:]) if met_mark == "'" else InterpretString(stdin[start:])
+        words.append(inner)
+        res = lexer(input(), words, met_mark)
+        return res
 
-    lexer_res = [words_as_objs]
-
+    lexer_res = [words]
     return lexer_res
+
