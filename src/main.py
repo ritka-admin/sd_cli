@@ -8,8 +8,6 @@ def main():
     Main function for reading users commands and executing them.
     """
     envs = dict(os.environ.items())
-    envs["x"]="ex"
-    envs["y"]="it"
 
     while True:
         command = input(">> ")

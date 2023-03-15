@@ -4,10 +4,12 @@ from typing import List
 
 def lexer(stdin: str, prev_res=None, mark=None) -> List[List[InterpretString | PlainString]]:
     """
-    :param stdin:
+    Parameters:
+        stdin: raw string from stdin
 
     Returns:
-      if there is a pipe in a raw_command, parser will need
+      List of several lists with InterpretString / PlainString objects.
+      If there is a pipe in a raw command, parser will need
       separate commands as separate lists
     """
     words = [] if prev_res is None else prev_res

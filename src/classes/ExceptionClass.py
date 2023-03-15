@@ -9,7 +9,7 @@ class InputError(Exception):
 
 class SpecialExitException(Exception):
     """
-    Exception for meeting an "exit" command and exiting terminal.
+    Exception for running into "exit" command and exiting terminal.
     """
 
     def __init__(self):
