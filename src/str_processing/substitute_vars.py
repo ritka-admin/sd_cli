@@ -4,14 +4,14 @@ from typing import List
 
 def substitute_vars(arg: List[List[InterpretString | PlainString]], envs: dict) -> str:
     """
-    Method to substitute variable if need
+    Method to substitute variable if needed
     Parameters:
     envs: dict of environment variables in system
     """
     new_raw_str = []
     for arg_list in arg:
         for elem in arg_list:
-            if isinstance(elem, InterpretString) and elem.raw_str.find("$")>=0:
+            if isinstance(elem, InterpretString) and elem.raw_str.find("$") >= 0:
                 new_int_str = []
                 st = elem.raw_str.find("$")
                 end = elem.raw_str.find("$", st + 1)

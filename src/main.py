@@ -1,6 +1,6 @@
 import os
-from str_processing.visitor import visitor
-from classes.ExceptionClass import SpecialExitException, InputError
+from src.str_processing.visitor import visitor
+from src.classes.ExceptionClass import SpecialExitException, InputError
 
 
 def main():

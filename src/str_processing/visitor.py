@@ -12,7 +12,7 @@ def visitor(raw_user_str: str, envs: dict) -> None:
         raw_user_str: command typed by user
         envs: environment variables in system
     """
-    lexer_res = lexer(substitute_vars(lexer(raw_user_str),envs))
+    lexer_res = lexer(substitute_vars(lexer(raw_user_str), envs))
     # lexer_res = lexer(raw_user_str)
 
     size = len(lexer_res)

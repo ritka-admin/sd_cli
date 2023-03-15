@@ -1,11 +1,9 @@
 from src.classes.CommandClass import *
 from src.classes.StringClass import *
-from src.classes.ExceptionClass import InputError
 
 from typing import List
 
 
-context = None
 command_constructors = {
     "echo": EchoCommand,
     "exit": ExitCommand,
@@ -26,8 +24,10 @@ def parser(lex_str: List[InterpretString | PlainString]) -> Command:
     Returns:
         CommandClass if command is valid
     """
-    if len(lex_str) == 0 or lex_str[0].raw_str not in command_list:
-        raise InputError(lex_str[0].raw_str)
+    if len(lex_str) == 0:
+        return EchoCommand([PlainString('')])
+    elif lex_str[0].raw_str not in command_list:
+        return ExternalCommand(lex_str[0].raw_str)
 
     obj = command_constructors[lex_str[0].raw_str](lex_str[1:])
     return obj

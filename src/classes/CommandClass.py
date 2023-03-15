@@ -1,9 +1,9 @@
 import sys
 
 sys.path.append("..")
-from classes.ChannelClass import *
-from classes.StringClass import *
-from classes.ExceptionClass import *
+from src.classes.ChannelClass import *
+from src.classes.StringClass import *
+from src.classes.ExceptionClass import *
 
 # from src.classes.ChannelClass import *
 # from src.classes.StringClass import *
@@ -16,22 +16,6 @@ class Command:
     """
     Abstract class for commands to execute them.
     """
-
-    # def substitute_vars(self, envs: dict) -> None:
-    #     """
-    #     Method to substitute variable if need
-    #     Parameters:
-    #     envs: dict of environment variables in system
-    #     """
-    #     if isinstance(self.arg, InterpretString):
-    #         if self.arg.raw_str[0] == "$":
-    #             try:
-    #                 value = envs[self.arg.raw_str[1:]]
-    #                 self.arg = value
-    #             except KeyError:
-    #                 print("")
-    #             return
-    #     self.arg = self.arg.raw_str
 
     @abstractmethod
     def execute(self, input_channel: Channel, output_channel: Channel) -> None:
@@ -51,8 +35,6 @@ class EchoCommand(Command):
         """
         self.arg = arg
 
-    # def substitute_vars(self, envs):
-    #     super().substitute_vars(envs)
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
@@ -98,9 +80,6 @@ class PwdCommand(Command):
         """
         self.arg = None
 
-    # def substitute_vars(self, envs):
-    #     pass
-
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
         Executes a command pwd
@@ -121,9 +100,6 @@ class CatCommand(Command):
         """
         (self.arg,) = arg
 
-    # def substitute_vars(self, envs):
-    #     super().substitute_vars(envs)
-
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
         Executes a command cat
@@ -143,9 +119,6 @@ class WcCommand(Command):
         arg: list of InterpretString or PlainString
         """
         (self.arg,) = arg
-
-    # def substitute_vars(self, envs: dict):
-    #     super().substitute_vars(envs)
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
@@ -169,9 +142,6 @@ class VarAssignment(Command):
         self.var = args[0].raw_str
         self.value = args[1].raw_str
 
-    # def substitute_vars(self, envs: dict):
-    #     envs[self.var] = self.value
-
     def execute(self, input_channel=None, output_channel=None):
         """
         Executes a variable assignment command
@@ -180,3 +150,16 @@ class VarAssignment(Command):
             OutCh: channel to write resul of execution (std::out or std::in of next command)
         """
         pass
+
+
+class ExternalCommand(Command):
+
+    def __init__(self, arg):
+        self.arg = arg
+
+    def execute(self, InCh: Channel, OutCh: Channel) -> None:
+        status = subprocess.getstatusoutput(self.arg)
+        if status[0] != 0:
+            raise InputError(self.arg)
+        # result = subprocess.run(self.arg, capture_output=True)
+        OutCh.writeline(status[1])
