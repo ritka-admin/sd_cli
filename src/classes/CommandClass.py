@@ -1,13 +1,8 @@
 import sys
 
-sys.path.append("..")
 from src.classes.ChannelClass import *
 from src.classes.StringClass import *
 from src.classes.ExceptionClass import *
-
-# from src.classes.ChannelClass import *
-# from src.classes.StringClass import *
-# from src.classes.ExceptionClass import SpecialExitException
 import subprocess
 from typing import Union, List
 
