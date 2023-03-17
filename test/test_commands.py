@@ -21,6 +21,8 @@ def lex_and_pars_without_grep(request) -> Command:
 
 
 @pytest.mark.parametrize('lex_and_pars_without_grep', ["echo sdsdas"], indirect=True)
-def test_echo_command(lex_and_pars_without_grep):
+@pytest.mark.parametrize('arg', [('asdasdas')])
+def test_echo_command(lex_and_pars_without_grep, arg):
     res = lex_and_pars_without_grep
     assert isinstance(res, EchoCommand)
+    print(arg)
