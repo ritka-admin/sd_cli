@@ -29,7 +29,6 @@ class EchoCommand(Command):
         """
         self.arg = arg
 
-
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
         Executes a command echo
@@ -51,9 +50,6 @@ class ExitCommand(Command):
 
         """
         self.arg = None
-
-    # def substitute_vars(self, envs):
-    #     pass
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None | SpecialExitException:
         """
@@ -92,7 +88,7 @@ class CatCommand(Command):
         Parameters:
             arg: list of InterpretString or PlainString
         """
-        (self.arg,) = arg
+        self.arg, = arg
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
@@ -101,7 +97,7 @@ class CatCommand(Command):
             InCh: channel to read (std::in or std::out of last command)
             OutCh: channel to write the result of execution (std::out or std::in of the next command)
         """
-        result = subprocess.run(["cat", self.arg], capture_output=True)
+        result = subprocess.run(["cat", self.arg.raw_str], capture_output=True)
         OutCh.writeline(result.stdout.decode())
 
 
@@ -158,5 +154,4 @@ class ExternalCommand(Command):
         status = subprocess.getstatusoutput(self.arg)
         if status[0] != 0:
             raise InputError(self.arg)
-        # result = subprocess.run(self.arg, capture_output=True)
         OutCh.writeline(status[1])
