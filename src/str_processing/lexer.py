@@ -2,10 +2,13 @@ from src.classes.StringClass import *
 
 from typing import List
 
+
 def lexer(stdin: str, prev_res=None, mark=None) -> List[List[InterpretString | PlainString]]:
     """
     Parameters:
         stdin: raw string from stdin
+        prev_res: auxiliary information for multistring processing
+        mark: auxiliary information for multistring processing (the mark that was left unclosed)
 
     Returns:
       List of several lists with InterpretString / PlainString objects.
