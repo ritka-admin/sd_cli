@@ -117,7 +117,7 @@ class WcCommand(Command):
             InCh: channel to read (std::in or std::out of last command)
             OutCh: channel to write the result of execution (std::out or std::in of the next command)
         """
-        result = subprocess.run(["wc", self.arg], capture_output=True)
+        result = subprocess.run(["wc", self.arg.raw_str], capture_output=True)
         OutCh.writeline(result.stdout.decode())
 
 

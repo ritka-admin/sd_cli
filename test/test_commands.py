@@ -9,7 +9,7 @@ from src.str_processing.parser import parser
 from src.str_processing.substitute_vars import substitute_vars
 
 
-file = tempfile.NamedTemporaryFile(mode='r+')
+file = tempfile.NamedTemporaryFile(mode='r+', dir='/tmp')
 envs = dict(os.environ.items())
 InCh = StdChannel()
 OutCh = StdChannel()
@@ -67,19 +67,21 @@ def test_pwd_command(lex_and_pars_without_grep, arg):
 
 
 @pytest.mark.parametrize('lex_and_pars_without_grep, arg, valid',
-                         [("cat 'qwerty'", 'qwerty', False)],
-                          # (f"cat {file.name}", "qwerty", True),
+                         [("cat 'qwerty'", 'qwerty', False),
+                          (f"cat {file.name}", "qwerty", True),
+                          (f"cat {file.name}", "\'1234234\' gdfgsfsdf", True)],
                          indirect=['lex_and_pars_without_grep'])
 def test_cat_command(lex_and_pars_without_grep, arg, valid):
     command = lex_and_pars_without_grep
     assert isinstance(command, CatCommand)
-    file.write(arg)
+    sys_file = tempfile.NamedTemporaryFile(mode='r+')
+    sys_file.write(arg)
     with io.StringIO() as sys.stdout:
-        in_file = file.read()
+        in_file = sys_file.read()
         command.execute(InCh, OutCh)
         res = sys.stdout.getvalue()
     if valid:
-        status = subprocess.getstatusoutput(f"cat {file.name}")
+        status = subprocess.getstatusoutput(f"cat {sys_file.name}")
         assert status[0] == 0             # exit code is 0
         assert res.rstrip() == in_file    # output is the same
     else:
@@ -87,8 +89,25 @@ def test_cat_command(lex_and_pars_without_grep, arg, valid):
         assert status[0] != 0
 
 
-def test_wc_command():
-    pass
+@pytest.mark.parametrize('lex_and_pars_without_grep, arg, valid',
+                         [("wc 'qwerty'", 'qwerty', False),
+                          (f"wc {file.name}", "qwerty", True),
+                          (f"wc {file.name}", "\'1234234\' gdfgsfsdf", True)],
+                         indirect=['lex_and_pars_without_grep'])
+def test_wc_command(lex_and_pars_without_grep, arg, valid):
+    command = lex_and_pars_without_grep
+    assert isinstance(command, WcCommand)
+    file.write(arg)
+    with io.StringIO() as sys.stdout:
+        command.execute(InCh, OutCh)
+        res = sys.stdout.getvalue()
+    if valid:
+        status = subprocess.getstatusoutput(f"wc {file.name}")
+        assert status[0] == 0               # exit code is 0
+        assert res.rstrip() == status[1]    # output is the same
+    else:
+        status = subprocess.getstatusoutput(f"wc {arg}")
+        assert status[0] != 0
 
 
 def test_external_command():
