@@ -3,18 +3,27 @@ from src.classes.StringClass import *
 from typing import List
 
 
-def lexer(stdin: str, prev_res=None, mark=None) -> List[List[InterpretString | PlainString]]:
+def lexer(stdin: str, prev_res=None, mark=None, skip=False) -> List[List[InterpretString | PlainString]]:
     """
     Parameters:
         stdin: raw string from stdin
         prev_res: auxiliary information for multistring processing
         mark: auxiliary information for multistring processing (the mark that was left unclosed)
+        skip: auxiliary information for splitting by pipe
 
     Returns:
       List of several lists with InterpretString / PlainString objects.
       If there is a pipe in a raw command, parser will need
       separate commands as separate lists
     """
+    if not skip:
+        commands = stdin.split('|')
+        result = []
+        for cmd in commands:
+            res = lexer(cmd, skip=True)
+            result.extend(res)
+        return result
+
     words = [] if prev_res is None else prev_res
     met_mark = None if mark is None else mark
 
@@ -52,7 +61,7 @@ def lexer(stdin: str, prev_res=None, mark=None) -> List[List[InterpretString | P
     if met_mark is not None:
         inner = PlainString(stdin[start:]) if met_mark == "'" else InterpretString(stdin[start:])
         words.append(inner)
-        res = lexer(input(), words, met_mark)
+        res = lexer(input(), words, met_mark, skip=True)
         return res
 
     lexer_res = [words]
