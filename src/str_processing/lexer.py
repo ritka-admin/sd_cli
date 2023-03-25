@@ -3,7 +3,9 @@ from src.classes.StringClass import *
 from typing import List
 
 
-def lexer(stdin: str, prev_res=None, mark=None, skip=False) -> List[List[InterpretString | PlainString]]:
+def lexer(
+    stdin: str, prev_res=None, mark=None, skip=False
+) -> List[List[InterpretString | PlainString]]:
     """
     Parameters:
         stdin: raw string from stdin
@@ -17,7 +19,7 @@ def lexer(stdin: str, prev_res=None, mark=None, skip=False) -> List[List[Interpr
       separate commands as separate lists
     """
     if not skip:
-        commands = stdin.split('|')
+        commands = stdin.split("|")
         result = []
         for cmd in commands:
             res = lexer(cmd, skip=True)
@@ -30,7 +32,7 @@ def lexer(stdin: str, prev_res=None, mark=None, skip=False) -> List[List[Interpr
     start = 0
     for i in range(len(stdin)):
 
-        prev = max(0, i-1)
+        prev = max(0, i - 1)
 
         if stdin[i] == "'" and met_mark is None and stdin[prev] == " ":
             if i != 0:
@@ -59,11 +61,14 @@ def lexer(stdin: str, prev_res=None, mark=None, skip=False) -> List[List[Interpr
         return [obj_list]
 
     if met_mark is not None:
-        inner = PlainString(stdin[start:]) if met_mark == "'" else InterpretString(stdin[start:])
+        inner = (
+            PlainString(stdin[start:])
+            if met_mark == "'"
+            else InterpretString(stdin[start:])
+        )
         words.append(inner)
         res = lexer(input(), words, met_mark, skip=True)
         return res
 
     lexer_res = [words]
     return lexer_res
-

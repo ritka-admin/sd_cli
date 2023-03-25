@@ -25,7 +25,7 @@ def parser(lex_str: List[InterpretString | PlainString]) -> Command:
         CommandClass object if the command is valid
     """
     if len(lex_str) == 0:
-        return EchoCommand([PlainString('')])
+        return EchoCommand([PlainString("")])
     elif lex_str[0].raw_str not in command_list:
         return ExternalCommand(lex_str[0].raw_str)
 
