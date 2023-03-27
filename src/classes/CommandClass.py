@@ -98,23 +98,21 @@ class CatCommand(Command):
             InCh: channel to read (std::in or std::out of last command)
             OutCh: channel to write the result of execution (std::out or std::in of the next command)
         """
-        # Если ввели только cat и не было валидного pipe до этого, то кидаю ошибку пока что
         if len(self.arg) == 0:
             if InCh.args:
-                # Здесь надо переделать, потому что InCh.args по правилам subprocess должен быть файлом,
-                # а у нас файлом или строчкой.
-                # Надо поискать, как запускать его с аргументами в виде строки
                 try:
+                    byte_str = InCh.args.encode()
                     result = subprocess.run(
-                        ["cat", InCh.args], capture_output=True
+                        ["cat"], input=byte_str,  capture_output=True
                     ).stdout.decode()
                 except:
+                    result = ''
                     pass
                 OutCh.writeline(result)
             else:
                 raise InputError("Forbidden usage of command without arguments!")
         else:
-            # Делаю из списка List[InterpretString | PlainString] список обычных str
+            # Creating a list of strings out of List[InterpretString | PlainString]
             result = []
             for arg in self.arg:
                 result.append(
@@ -142,23 +140,20 @@ class WcCommand(Command):
             InCh: channel to read (std::in or std::out of last command)
             OutCh: channel to write the result of execution (std::out or std::in of the next command)
         """
-        # Если ввели только wc, то кидаю ошибку пока что
         if len(self.arg) == 0:
             if InCh.args:
-                # Здесь надо переделать, потому что InCh.args по правилам subprocess должен быть файлом,
-                # а у нас файлом или строчкой.
-                # Надо поискать, как запускать его с аргументами в виде строки
                 try:
+                    byte_str = InCh.args.encode()
                     result = subprocess.run(
-                        ["wc", InCh.args], capture_output=True
+                        ["wc"], input=byte_str, capture_output=True
                     ).stdout.decode()
                 except:
-                    pass
+                    result = ''
                 OutCh.writeline(result)
             else:
                 raise InputError("Forbidden usage of command without arguments!")
         else:
-            # Делаю из списка List[InterpretString | PlainString] список обычных str
+            # Creating a list of strings out of List[InterpretString | PlainString]
             result = []
             for arg in self.arg:
                 result.append(
@@ -180,9 +175,6 @@ class VarAssignment(Command):
         self.args = args
         self.var = args[0].raw_str
         self.value = args[1].raw_str
-
-    # def substitute_vars(self, envs: dict):
-    #     envs[self.var] = self.value
 
     def execute(self, InCh=None, OutCh=None):
         """
