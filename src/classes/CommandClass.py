@@ -195,3 +195,22 @@ class ExternalCommand(Command):
         if status[0] != 0:
             raise InputError(self.arg)
         OutCh.writeline(status[1])
+
+class LsCommand(Command):
+    def __init__(self, arg: List[InterpretString | PlainString]) -> None:
+        """
+        Constructor
+        Parameters:
+            arg: list of InterpretString or PlainString
+        """
+        self.arg = None
+
+    def execute(self, InCh: Channel, OutCh: Channel) -> None:
+        """
+        Executes a command pwd
+        Parameters:
+            InCh: channel to read (std::in or std::out of last command)
+            OutCh: channel to write the result of execution (std::out or std::in of the next command)
+        """
+        result = subprocess.run(["ls"], capture_output=True)
+        OutCh.writeline(result.stdout.decode())
