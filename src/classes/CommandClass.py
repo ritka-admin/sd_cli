@@ -103,7 +103,7 @@ class CatCommand(Command):
                 try:
                     byte_str = InCh.args.encode()
                     result = subprocess.run(
-                        ["cat"], input=byte_str,  capture_output=True
+                        ["cat"], input=byte_str, capture_output=True
                     ).stdout.decode()
                 except:
                     result = ''
@@ -196,6 +196,7 @@ class ExternalCommand(Command):
             raise InputError(self.arg)
         OutCh.writeline(status[1])
 
+
 class LsCommand(Command):
     def __init__(self, arg: List[InterpretString | PlainString]) -> None:
         """
@@ -203,7 +204,7 @@ class LsCommand(Command):
         Parameters:
             arg: list of InterpretString or PlainString
         """
-        self.arg = None
+        self.arg = arg
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
@@ -212,5 +213,10 @@ class LsCommand(Command):
             InCh: channel to read (std::in or std::out of last command)
             OutCh: channel to write the result of execution (std::out or std::in of the next command)
         """
-        result = subprocess.run(["ls"], capture_output=True)
-        OutCh.writeline(result.stdout.decode())
+        try:
+            result = subprocess.run(["ls", *[arg.raw_str for arg in self.arg]], stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, check=True)
+        except subprocess.CalledProcessError as e:
+            raise InputError(e.output.decode('utf-8'))
+        else:
+            OutCh.writeline(result.stdout.decode('utf-8'))
