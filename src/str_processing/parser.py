@@ -11,9 +11,10 @@ command_constructors = {
     "cat": CatCommand,
     "wc": WcCommand,
     "=": VarAssignment,
-    "ls": LsCommand
+    "ls": LsCommand,
+    "cd": CdCommand
 }
-command_list = ["echo", "exit", "pwd", "cat", "wc", "=", "ls"]
+command_list = ["echo", "exit", "pwd", "cat", "wc", "=", "ls", "cd"]
 
 
 def parser(lex_str: List[InterpretString | PlainString]) -> Command:

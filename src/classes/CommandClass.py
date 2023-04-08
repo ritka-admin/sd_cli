@@ -1,4 +1,7 @@
+import os
 import sys
+import platform
+from pathlib import Path
 
 from src.classes.ChannelClass import *
 from src.classes.StringClass import *
@@ -208,7 +211,7 @@ class LsCommand(Command):
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
-        Executes a command pwd
+        Executes a command ls
         Parameters:
             InCh: channel to read (std::in or std::out of last command)
             OutCh: channel to write the result of execution (std::out or std::in of the next command)
@@ -220,3 +223,31 @@ class LsCommand(Command):
             raise InputError(e.output.decode('utf-8'))
         else:
             OutCh.writeline(result.stdout.decode('utf-8'))
+
+
+class CdCommand(Command):
+    def __init__(self, arg: List[InterpretString | PlainString]) -> None:
+        """
+        Constructor
+        Parameters:
+            arg: list of InterpretString or PlainString
+        """
+        self.arg = arg
+        self.home_dir = os.environ['USERPROFILE'] if platform.system() == "Windows" else os.environ['HOME']
+        self.current_directory = Path(os.getcwd())
+
+    def execute(self, InCh: Channel, OutCh: Channel) -> None:
+        """
+        Executes a command cd
+        Parameters:
+            InCh: channel to read (std::in or std::out of last command)
+            OutCh: channel to write the result of execution (std::out or std::in of the next command)
+        """
+        if len(self.arg) == 0:
+            os.chdir(self.home_dir)
+            return
+
+        new_path = self.current_directory / Path(self.arg[0].raw_str).resolve()
+        if not os.path.exists(new_path):
+            raise InputError(f"cd: {new_path}: No such file or directory")
+        os.chdir(new_path.as_posix().replace('/', '\\') if platform.system() == "Windows" else new_path.as_posix())

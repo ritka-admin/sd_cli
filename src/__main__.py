@@ -10,7 +10,7 @@ def main():
     envs = dict(os.environ.items())
 
     while True:
-        command = input(">> ")
+        command = input(os.getcwd() + " >> ")
         try:
             visitor(command, envs)
         except InputError:
