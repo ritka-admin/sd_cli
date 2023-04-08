@@ -190,14 +190,34 @@ class VarAssignment(Command):
 
 
 class ExternalCommand(Command):
-    def __init__(self, arg):
-        self.arg = arg
+    def __init__(self, arg: List[InterpretString | PlainString]):
+        self.arg_row = [c.raw_str for c in arg]  # Чистая строка
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
-        status = subprocess.getstatusoutput(self.arg)
-        if status[0] != 0:
-            raise InputError(self.arg)
-        OutCh.writeline(status[1])
+        env = os.environ.copy()  # Копируем текущие переменные окружения
+        if os.name == 'nt':
+            # Windows
+            cmd = ['cmd', '/c'] + self.arg_row
+        else:
+            # Linux/Mac
+            cmd = self.arg_row
+
+        stdin = subprocess.PIPE
+        inp = None
+        if hasattr(InCh, 'args'):
+            stdin = None
+            inp = InCh.args.encode()
+
+        # Запуск команды
+        result = subprocess.run(cmd, stdin=stdin,
+                                input=inp,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                env=env)
+        if result.returncode != 0:
+            raise InputError(result.stderr.decode('utf-8'))
+        else:
+            OutCh.writeline(result.stdout.decode('utf-8'))
 
 
 class LsCommand(Command):
