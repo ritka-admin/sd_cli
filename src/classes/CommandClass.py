@@ -1,4 +1,7 @@
+import os
 import sys
+import platform
+from pathlib import Path
 
 from src.classes.ChannelClass import *
 from src.classes.StringClass import *
@@ -103,7 +106,7 @@ class CatCommand(Command):
                 try:
                     byte_str = InCh.args.encode()
                     result = subprocess.run(
-                        ["cat"], input=byte_str,  capture_output=True
+                        ["cat"], input=byte_str, capture_output=True
                     ).stdout.decode()
                 except:
                     result = ''
@@ -187,11 +190,84 @@ class VarAssignment(Command):
 
 
 class ExternalCommand(Command):
-    def __init__(self, arg):
+    def __init__(self, arg: List[InterpretString | PlainString]):
+        self.arg_row = [c.raw_str for c in arg]  # Чистая строка
+
+    def execute(self, InCh: Channel, OutCh: Channel) -> None:
+        env = os.environ.copy()  # Копируем текущие переменные окружения
+        if os.name == 'nt':
+            # Windows
+            cmd = ['cmd', '/c'] + self.arg_row
+        else:
+            # Linux/Mac
+            cmd = self.arg_row
+
+        stdin = subprocess.PIPE
+        inp = None
+        if hasattr(InCh, 'args'):
+            stdin = None
+            inp = InCh.args.encode()
+
+        # Запуск команды
+        result = subprocess.run(cmd, stdin=stdin,
+                                input=inp,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                env=env)
+        if result.returncode != 0:
+            raise InputError(result.stderr.decode('utf-8'))
+        else:
+            OutCh.writeline(result.stdout.decode('utf-8'))
+
+
+class LsCommand(Command):
+    def __init__(self, arg: List[InterpretString | PlainString]) -> None:
+        """
+        Constructor
+        Parameters:
+            arg: list of InterpretString or PlainString
+        """
         self.arg = arg
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
-        status = subprocess.getstatusoutput(self.arg)
-        if status[0] != 0:
-            raise InputError(self.arg)
-        OutCh.writeline(status[1])
+        """
+        Executes a command ls
+        Parameters:
+            InCh: channel to read (std::in or std::out of last command)
+            OutCh: channel to write the result of execution (std::out or std::in of the next command)
+        """
+        try:
+            result = subprocess.run(["ls", *[arg.raw_str for arg in self.arg]], stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, check=True)
+        except subprocess.CalledProcessError as e:
+            raise InputError(e.output.decode('utf-8'))
+        else:
+            OutCh.writeline(result.stdout.decode('utf-8'))
+
+
+class CdCommand(Command):
+    def __init__(self, arg: List[InterpretString | PlainString]) -> None:
+        """
+        Constructor
+        Parameters:
+            arg: list of InterpretString or PlainString
+        """
+        self.arg = arg
+        self.home_dir = os.environ['USERPROFILE'] if platform.system() == "Windows" else os.environ['HOME']
+        self.current_directory = Path(os.getcwd())
+
+    def execute(self, InCh: Channel, OutCh: Channel) -> None:
+        """
+        Executes a command cd
+        Parameters:
+            InCh: channel to read (std::in or std::out of last command)
+            OutCh: channel to write the result of execution (std::out or std::in of the next command)
+        """
+        if len(self.arg) == 0:
+            os.chdir(self.home_dir)
+            return
+
+        new_path = self.current_directory / Path(self.arg[0].raw_str).resolve()
+        if not os.path.exists(new_path):
+            raise InputError(f"cd: {new_path}: No such file or directory")
+        os.chdir(new_path.as_posix().replace('/', '\\') if platform.system() == "Windows" else new_path.as_posix())

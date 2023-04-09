@@ -11,8 +11,10 @@ command_constructors = {
     "cat": CatCommand,
     "wc": WcCommand,
     "=": VarAssignment,
+    "ls": LsCommand,
+    "cd": CdCommand
 }
-command_list = ["echo", "exit", "pwd", "cat", "wc", "="]
+command_list = ["echo", "exit", "pwd", "cat", "wc", "=", "ls", "cd"]
 
 
 def parser(lex_str: List[InterpretString | PlainString]) -> Command:
@@ -27,7 +29,7 @@ def parser(lex_str: List[InterpretString | PlainString]) -> Command:
     if len(lex_str) == 0:
         return EchoCommand([PlainString("")])
     elif lex_str[0].raw_str not in command_list:
-        return ExternalCommand(lex_str[0].raw_str)
+        return ExternalCommand(lex_str)
 
     obj = command_constructors[lex_str[0].raw_str](lex_str[1:])
     return obj
