@@ -10,6 +10,8 @@ def substitute_vars(arg: List[List[InterpretString | PlainString]], envs: dict) 
     """
     new_raw_str = []
     for arg_list in arg:
+        if new_raw_str:
+            new_raw_str.append("|")
         for elem in arg_list:
             if isinstance(elem, InterpretString) and elem.raw_str.find("$") >= 0:
                 new_int_str = []

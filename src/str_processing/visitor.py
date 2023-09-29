@@ -13,14 +13,14 @@ def visitor(raw_user_str: str, envs: dict) -> None:
         envs: environment variables in the system
     """
     lexer_res = lexer(substitute_vars(lexer(raw_user_str), envs))
-    # lexer_res = lexer(raw_user_str)
 
+    outCh = None
     size = len(lexer_res)
     for i in range(size):
         if i == 0:
             inCh = StdChannel()
         else:
-            inCh = PipeChannel()
+            inCh = outCh
 
         if i == size - 1:
             outCh = StdChannel()
@@ -32,4 +32,3 @@ def visitor(raw_user_str: str, envs: dict) -> None:
         except InputError as e:
             outCh.writeline(e.msg)
         # envs = parser_res.substitute_vars(envs)
-        

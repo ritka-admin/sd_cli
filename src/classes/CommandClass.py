@@ -11,6 +11,7 @@ class Command:
     """
     Abstract class for commands to execute them.
     """
+
     @abstractmethod
     def execute(self, input_channel: Channel, output_channel: Channel) -> None:
         pass
@@ -37,8 +38,8 @@ class EchoCommand(Command):
             OutCh: channel to write the result of execution (std::out or std::in of the next command)
         """
         if not self.arg:
-            self.arg = InCh.readline()
-        OutCh.writeline(''.join([el.raw_str for el in self.arg]))
+            OutCh.writeline("")
+        OutCh.writeline(" ".join([el.raw_str for el in self.arg]))
 
 
 class ExitCommand(Command):
@@ -88,7 +89,7 @@ class CatCommand(Command):
         Parameters:
             arg: list of InterpretString or PlainString
         """
-        self.arg, = arg
+        self.arg = arg
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
@@ -97,8 +98,30 @@ class CatCommand(Command):
             InCh: channel to read (std::in or std::out of last command)
             OutCh: channel to write the result of execution (std::out or std::in of the next command)
         """
-        result = subprocess.run(["cat", self.arg.raw_str], capture_output=True)
-        OutCh.writeline(result.stdout.decode())
+        if len(self.arg) == 0:
+            if InCh.args:
+                try:
+                    byte_str = InCh.args.encode()
+                    result = subprocess.run(
+                        ["cat"], input=byte_str,  capture_output=True
+                    ).stdout.decode()
+                except:
+                    result = ''
+                    pass
+                OutCh.writeline(result)
+            else:
+                raise InputError("Forbidden usage of command without arguments!")
+        else:
+            # Creating a list of strings out of List[InterpretString | PlainString]
+            result = []
+            for arg in self.arg:
+                result.append(
+                    subprocess.run(
+                        ["cat", arg.raw_str], capture_output=True
+                    ).stdout.decode()
+                )
+            result = "".join(result)
+            OutCh.writeline(result)
 
 
 class WcCommand(Command):
@@ -108,7 +131,7 @@ class WcCommand(Command):
         Parameters:
             arg: list of InterpretString or PlainString
         """
-        (self.arg,) = arg
+        self.arg = arg
 
     def execute(self, InCh: Channel, OutCh: Channel) -> None:
         """
@@ -117,8 +140,29 @@ class WcCommand(Command):
             InCh: channel to read (std::in or std::out of last command)
             OutCh: channel to write the result of execution (std::out or std::in of the next command)
         """
-        result = subprocess.run(["wc", self.arg.raw_str], capture_output=True)
-        OutCh.writeline(result.stdout.decode())
+        if len(self.arg) == 0:
+            if InCh.args:
+                try:
+                    byte_str = InCh.args.encode()
+                    result = subprocess.run(
+                        ["wc"], input=byte_str, capture_output=True
+                    ).stdout.decode()
+                except:
+                    result = ''
+                OutCh.writeline(result)
+            else:
+                raise InputError("Forbidden usage of command without arguments!")
+        else:
+            # Creating a list of strings out of List[InterpretString | PlainString]
+            result = []
+            for arg in self.arg:
+                result.append(
+                    subprocess.run(
+                        ["wc", arg.raw_str], capture_output=True
+                    ).stdout.decode()
+                )
+            result = "".join(result)
+            OutCh.writeline(result)
 
 
 class VarAssignment(Command):
@@ -132,9 +176,6 @@ class VarAssignment(Command):
         self.var = args[0].raw_str
         self.value = args[1].raw_str
 
-    # def substitute_vars(self, envs: dict):
-    #     envs[self.var] = self.value
-
     def execute(self, InCh=None, OutCh=None):
         """
         Executes a variable assignment command
@@ -146,7 +187,6 @@ class VarAssignment(Command):
 
 
 class ExternalCommand(Command):
-
     def __init__(self, arg):
         self.arg = arg
 
