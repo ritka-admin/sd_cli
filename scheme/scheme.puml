@@ -1,0 +1,26 @@
+@startuml
+scale 1000 width
+
+raw_cmd --> StringProcessing
+
+state StringProcessing {
+  Lexer -> Parser : Tokens
+  Lexer : Quotes interpetation
+  Parser : Command extraction
+}
+
+Parser --> CommandClass : Existing Command
+Parser --> ExceptionHandling : Non-exisiting command
+ExceptionHandling : NameError / KeyError
+
+state Envs
+Envs : Global storage of environment variables
+CommandClass --> CommandObject : Object Creation
+CommandClass : def substitute_vars
+CommandClass : def execute
+CommandObject --> Envs : (1) object.substitute_vars
+Envs --> CommandObject : valid command
+Envs --> ExceptionHandling : Non-existing variable
+
+CommandObject --> Result : (2) object.execute
+@enduml
